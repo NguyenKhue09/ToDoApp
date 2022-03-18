@@ -9,7 +9,7 @@ import com.khue.todoapp.util.Constants.LIST_ARGUMENT_KEY
 import com.khue.todoapp.util.Constants.LIST_SCREEN
 
 fun NavGraphBuilder.listComposable(
-    navigateToTaskScreen: (Int) -> Unit
+    navigateToTaskScreen: (taskId: Int) -> Unit
 ) {
 
     composable(
