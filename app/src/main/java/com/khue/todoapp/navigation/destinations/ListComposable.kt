@@ -7,9 +7,11 @@ import androidx.navigation.navArgument
 import com.khue.todoapp.ui.screens.list.ListScreen
 import com.khue.todoapp.util.Constants.LIST_ARGUMENT_KEY
 import com.khue.todoapp.util.Constants.LIST_SCREEN
+import com.khue.todoapp.viewmodels.SharedViewModel
 
 fun NavGraphBuilder.listComposable(
-    navigateToTaskScreen: (taskId: Int) -> Unit
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
 
     composable(
@@ -18,6 +20,9 @@ fun NavGraphBuilder.listComposable(
             type = NavType.StringType
         })
     ) {
-        ListScreen(navigateToTaskScreen = navigateToTaskScreen)
+        ListScreen(
+            navigateToTaskScreen = navigateToTaskScreen,
+            sharedViewModel = sharedViewModel
+        )
     }
 }
