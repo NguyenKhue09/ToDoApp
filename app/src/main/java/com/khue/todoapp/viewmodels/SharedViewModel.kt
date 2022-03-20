@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.khue.todoapp.data.model.ToDoTask
 import com.khue.todoapp.data.repositories.ToDoRepository
+import com.khue.todoapp.util.RequestState
 import com.khue.todoapp.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,14 +27,30 @@ class SharedViewModel @Inject constructor(
     val searchTextState: MutableState<String> = mutableStateOf("")
 
     private val _allTasks =
-        MutableStateFlow<List<ToDoTask>>(emptyList())
-    val allTasks: StateFlow<List<ToDoTask>> = _allTasks
+        MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
+    val allTasks: StateFlow<RequestState<List<ToDoTask>>> = _allTasks
 
 
     fun getAllTasks() {
+        _allTasks.value = RequestState.Loading
+        try {
+            viewModelScope.launch {
+                repository.getAllTasks.collect {
+                    _allTasks.value = RequestState.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            _allTasks.value = RequestState.Error(e)
+        }
+    }
+
+    private val _selectedTask: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
+    val selectedTask: StateFlow<ToDoTask?> = _selectedTask
+
+    fun getSelectedTask(taskId: Int) {
         viewModelScope.launch {
-            repository.getAllTasks.collect {
-                _allTasks.value = it
+            repository.getSelectedTask(taskId = taskId).collect { task ->
+                _selectedTask.value = task
             }
         }
     }

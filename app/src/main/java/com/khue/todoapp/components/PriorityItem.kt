@@ -10,10 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.khue.todoapp.data.model.Priority
 import com.khue.todoapp.ui.theme.LARGE_PADDING
-import com.khue.todoapp.ui.theme.PRIORITY_INDICATOR_PADDING
+import com.khue.todoapp.ui.theme.PRIORITY_INDICATOR_SIZE
 import com.khue.todoapp.ui.theme.Typography
 
 @Composable
@@ -22,7 +21,7 @@ fun PriorityItem(priority: Priority) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Canvas(
-            modifier = Modifier.size(PRIORITY_INDICATOR_PADDING)
+            modifier = Modifier.size(PRIORITY_INDICATOR_SIZE)
         ) {
             drawCircle(color = priority.color)
         }
