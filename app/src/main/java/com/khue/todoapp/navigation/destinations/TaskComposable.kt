@@ -24,13 +24,19 @@ fun NavGraphBuilder.taskComposable(
             type = NavType.IntType
         })
     ) { navBackStackEntry ->
+        // Đù má nó chạy nhiều lần luôn ạ
+        // mặc dù biết nó chạy nhiều lần do nó thay đổi state nhưng vẫn khó hiểu vlvlvlvlv
+        println("Running block")
         val taskId = navBackStackEntry.arguments!!.getInt(TASK_ARGUMENT_KEY)
         sharedViewModel.getSelectedTask(taskId = taskId)
         val selectedTask by sharedViewModel.selectedTask.collectAsState()
 
         LaunchedEffect(key1 = selectedTask) {
-            println("Run get value")
-            sharedViewModel.updateTaskField(selectedTask)
+            println("Update value")
+            println(selectedTask)
+            if (selectedTask != null || taskId == -1) {
+                sharedViewModel.updateTaskField(selectedTask)
+            }
         }
 
         TaskScreen(
