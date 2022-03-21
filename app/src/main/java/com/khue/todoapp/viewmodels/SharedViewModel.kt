@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.khue.todoapp.data.model.Priority
 import com.khue.todoapp.data.model.ToDoTask
 import com.khue.todoapp.data.repositories.ToDoRepository
+import com.khue.todoapp.util.Constants.MAX_TITLE_LENGTH
 import com.khue.todoapp.util.RequestState
 import com.khue.todoapp.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +23,12 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(
     private val repository: ToDoRepository
 ): ViewModel() {
+
+    val id: MutableState<Int> = mutableStateOf(0)
+    val title: MutableState<String> = mutableStateOf("")
+    val description: MutableState<String> = mutableStateOf("")
+    val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
+
 
     val searchAppBarState: MutableState<SearchAppBarState> =
         mutableStateOf(SearchAppBarState.CLOSED)
@@ -51,7 +59,29 @@ class SharedViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getSelectedTask(taskId = taskId).collect { task ->
                 _selectedTask.value = task
+                println("getvalue")
             }
+        }
+    }
+
+    fun updateTaskField(selectedTask: ToDoTask?) {
+        println("update: $selectedTask")
+        if (selectedTask != null) {
+            id.value = selectedTask.id
+            title.value = selectedTask.title
+            description.value = selectedTask.description
+            priority.value = selectedTask.priority
+        } else {
+            id.value = 0
+            title.value = ""
+            description.value = ""
+            priority.value = Priority.LOW
+        }
+    }
+
+    fun updateTitle(newTitle: String) {
+        if(newTitle.length < MAX_TITLE_LENGTH) {
+            title.value = newTitle
         }
     }
 }
