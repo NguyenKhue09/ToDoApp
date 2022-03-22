@@ -22,6 +22,7 @@ import com.khue.todoapp.R
 import com.khue.todoapp.components.PriorityItem
 import com.khue.todoapp.data.model.Priority
 import com.khue.todoapp.ui.theme.*
+import com.khue.todoapp.util.Action
 import com.khue.todoapp.util.SearchAppBarState
 import com.khue.todoapp.util.TrailingIconState
 import com.khue.todoapp.viewmodels.SharedViewModel
@@ -40,11 +41,10 @@ fun ListAppBar(
                         SearchAppBarState.OPENED
                 },
                 onSortClick = {},
-                onDeleteClicked = {}
+                onDeleteAllClicked = {
+                    sharedViewModel.action.value = Action.DELETE_ALL
+                }
             )
-        }
-        SearchAppBarState.TRIGGERED -> {
-
         }
         else -> {
             SearchAppBar(
@@ -57,7 +57,9 @@ fun ListAppBar(
                         SearchAppBarState.CLOSED
                     sharedViewModel.searchTextState.value = ""
                 },
-                onSearchClicked = {}
+                onSearchClicked = {
+                    sharedViewModel.searchDatabase(it)
+                }
             )
         }
     }
@@ -67,14 +69,14 @@ fun ListAppBar(
 fun DefaultListAppBar(
     onSearchClicked: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ) {
     TopAppBar(
         actions = {
             ListAppBarAction(
                 onSearchClicked = onSearchClicked,
                 onSortClick = onSortClick,
-                onDeleteClicked = onDeleteClicked
+                onDeleteAllClicked = onDeleteAllClicked
             )
         },
         title = {
@@ -92,11 +94,11 @@ fun DefaultListAppBar(
 fun ListAppBarAction(
     onSearchClicked: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ) {
     SearchAction(onSearchClicked = onSearchClicked)
     SortAction(onSortClick = onSortClick)
-    DeleteAllAction(onDeleteClicked = onDeleteClicked)
+    DeleteAllAction(onDeleteAllClicked = onDeleteAllClicked)
 }
 
 @Composable
@@ -174,7 +176,7 @@ fun SortAction(
 
 @Composable
 fun DeleteAllAction(
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -197,7 +199,7 @@ fun DeleteAllAction(
             DropdownMenuItem(
                 onClick = {
                     expanded = false
-                    onDeleteClicked()
+                    onDeleteAllClicked()
                 }
             ) {
                 Text(
@@ -312,7 +314,7 @@ private fun DefaultListAppBarPrev() {
     DefaultListAppBar(
         onSearchClicked = {},
         onSortClick = {},
-        onDeleteClicked = {}
+        onDeleteAllClicked = {}
     )
 }
 
