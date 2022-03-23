@@ -1,14 +1,17 @@
 package com.khue.todoapp.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.khue.todoapp.navigation.destinations.listComposable
+import com.khue.todoapp.navigation.destinations.splashComposable
 import com.khue.todoapp.navigation.destinations.taskComposable
-import com.khue.todoapp.util.Constants.LIST_SCREEN
+import com.khue.todoapp.util.Constants.SPLASH_SCREEN
 import com.khue.todoapp.viewmodels.SharedViewModel
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SetupNavigation(
     navController: NavHostController,
@@ -18,16 +21,21 @@ fun SetupNavigation(
         Screens(navController = navController)
     }
 
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
-        startDestination = LIST_SCREEN
+        startDestination = SPLASH_SCREEN
     ) {
+
+        splashComposable(
+            navigateToListScreen = screen.splash
+        )
+
         listComposable(
-            navigateToTaskScreen = screen.task,
+            navigateToTaskScreen = screen.list,
             sharedViewModel = sharedViewModel
         )
         taskComposable(
-            navigateToListScreen = screen.list,
+            navigateToListScreen = screen.task,
             sharedViewModel = sharedViewModel
         )
     }
