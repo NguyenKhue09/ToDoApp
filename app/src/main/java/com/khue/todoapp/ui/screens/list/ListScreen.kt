@@ -24,12 +24,17 @@ fun ListScreen(
 
     LaunchedEffect(key1 = true) {
         sharedViewModel.getAllTasks()
+        sharedViewModel.readSortState()
     }
 
     val action by sharedViewModel.action
 
     val allTasks by sharedViewModel.allTasks.collectAsState()
     val searchTasks by sharedViewModel.searchTasks.collectAsState()
+    val sortState by sharedViewModel.sortState.collectAsState()
+    val lowPriorityTasks by sharedViewModel.lowPriorityTasks.collectAsState()
+    val highPriorityTasks by sharedViewModel.highPriorityTasks.collectAsState()
+
     val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
     val searchTextState: String by sharedViewModel.searchTextState
 
@@ -63,6 +68,9 @@ fun ListScreen(
             ListContent(
                 allTasks = allTasks,
                 searchedTasks = searchTasks,
+                lowPriorityTasks = lowPriorityTasks,
+                highPriorityTasks = highPriorityTasks,
+                sortState = sortState,
                 searchAppBarState = searchAppBarState,
                 navigateToTaskScreen = navigateToTaskScreen
             )
@@ -109,7 +117,7 @@ fun DisplaySnackBar(
                     actionLabel = setActionLabel(action)
                 )
                 undoDeletedTask(
-                    action =  action,
+                    action = action,
                     snackBarResult = snackBarResult,
                     onUndoClicked = onUndoClicked
                 )
@@ -122,7 +130,7 @@ private fun setMessage(
     action: Action,
     taskTitle: String
 ): String {
-    return when(action) {
+    return when (action) {
         Action.DELETE_ALL -> "All Tasks Removed."
         else -> "${action.name}: $taskTitle"
     }
@@ -142,7 +150,8 @@ private fun undoDeletedTask(
     onUndoClicked: (Action) -> Unit
 ) {
     if (snackBarResult == SnackbarResult.ActionPerformed
-        && action == Action.DELETE) {
+        && action == Action.DELETE
+    ) {
         onUndoClicked(Action.UNDO)
     }
 }
