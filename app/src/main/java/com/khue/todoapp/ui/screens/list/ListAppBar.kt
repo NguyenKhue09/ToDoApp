@@ -25,7 +25,6 @@ import com.khue.todoapp.data.model.Priority
 import com.khue.todoapp.ui.theme.*
 import com.khue.todoapp.util.Action
 import com.khue.todoapp.util.SearchAppBarState
-import com.khue.todoapp.util.TrailingIconState
 import com.khue.todoapp.viewmodels.SharedViewModel
 
 @Composable
@@ -155,37 +154,15 @@ fun SortAction(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onSortClick(Priority.LOW)
+            Priority.values().slice(setOf(0, 2, 3)).forEach { priority ->
+                DropdownMenuItem(
+                    onClick = {
+                        expanded = false
+                        onSortClick(priority)
+                    }
+                ) {
+                    PriorityItem(priority = priority)
                 }
-            ) {
-                PriorityItem(priority = Priority.LOW)
-            }
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onSortClick(Priority.MEDIUM)
-                }
-            ) {
-                PriorityItem(priority = Priority.MEDIUM)
-            }
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onSortClick(Priority.HIGH)
-                }
-            ) {
-                PriorityItem(priority = Priority.HIGH)
-            }
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onSortClick(Priority.NONE)
-                }
-            ) {
-                PriorityItem(priority = Priority.NONE)
             }
         }
     }
@@ -236,9 +213,6 @@ fun SearchAppBar(
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit
 ) {
-    var trailingIconState by remember {
-        mutableStateOf(TrailingIconState.READY_TO_DELETE)
-    }
 
     Surface(
         modifier = Modifier
@@ -283,19 +257,10 @@ fun SearchAppBar(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        when (trailingIconState) {
-                            TrailingIconState.READY_TO_DELETE -> {
-                                onTextChange("")
-                                trailingIconState = TrailingIconState.READY_TO_CLOSE
-                            }
-                            TrailingIconState.READY_TO_CLOSE -> {
-                                if (text.isNotEmpty()) {
-                                    onTextChange("")
-                                } else {
-                                    onCloseClicked()
-                                    trailingIconState = TrailingIconState.READY_TO_DELETE
-                                }
-                            }
+                        if (text.isNotEmpty()) {
+                            onTextChange("")
+                        } else {
+                            onCloseClicked()
                         }
                     }
                 ) {
